@@ -4,16 +4,49 @@
 #include <limits.h>
 #include <assert.h>
 
-void print_array (int array[], int length) {
-    int i;
+#include "paa.h"
 
-    for (i = 0; i < length; i++) {
-        printf ("%d ", array[i]);
+/* if K < 5, use knth_merge */
+void _mergesort (int *array, int length) {
+    int copy_array[length];
+    int middle = length / 2;
+    int c, i, j;
+
+    c = i = 0;
+    j = middle;
+
+    if (length == 1) {
+        return;
     }
 
-    printf ("\n");
-}
+    _mergesort (array, middle);
+    _mergesort (&array[middle], length - middle);
 
+    while (c < length) {
+        if (array[i] < array[j] && i < middle) {
+            copy_array[c] = array[i++];
+        } else if (array [i] > array[j] && j < length) {
+            copy_array[c] = array[j++];
+        } else if (i >= middle) {
+            copy_array[c] = array[j++];
+        } else if (j >= length) {
+            copy_array[c] = array[i++];
+        }
+        c++;
+    }
+
+    memcpy (array, copy_array, length * sizeof (int));
+}
+int knth_merge (int array[], int length, int k) {
+    int copy_array[length];
+
+    memcpy (copy_array, array, length * sizeof (int));
+
+    _mergesort (copy_array, length);
+
+    return copy_array[k - 1];
+}
+/* end of copy paste knth_merge */
 
 int median (int array[], int length) {
     int i, j;
@@ -29,10 +62,8 @@ int median (int array[], int length) {
     }
 
     for (i = 0; i < length; i++) {
-        //printf ("result array[%d] val: %d = %d\n", i, array[i], result[i]);
         if (result[i] == middle)
             return array[i];
-
     }
 
     return -1;
@@ -41,50 +72,80 @@ int median (int array[], int length) {
 
 
 int knth_n_mom (int array[], int length, int k) {
-    int mom, i;
-    int i1, i2, i3, i4, i5;
-    int sizes[5];
+    int c = 0;
+    int mom, i, j;
+    int remainder = length % 5;
+    int group_number = (length / 5);
+    int sizes[group_number];
+    int groups[group_number][5];
+    int medians[group_number + 1];
     int left[length/2], right[length/2];
     int left_size, right_size;
-    int medians[5] = {0, 0, 0, 0, 0};
-    int remainder;
+
+    /* sort and merge for small arrays */
+    if  (length <= 5)
+        return knth_merge (array, length, k);
+
+    /* If X % 5 > 0 then we need one more group
+     * 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
+     * |      1     |       2       |  3        |
+     */
+    if (remainder > 0)
+        group_number++;
 
     /* initialize auxiliary arrays sizes */
-    for (i = 0; i < 5; i++) {
-        sizes[i] = length / 5;
-        printf ("Initial slice size %d: %d\n", i, sizes[i]);
+    for (i = 0; i < group_number; i++) {
+        sizes[i] = 5;
     }
 
-    /* handle remainder numbers */
-    remainder = length % 5;
-    for (i = 0; i < 5; i++) {
-        if (remainder > 0 && remainder--)
-            sizes[i] += 1;
-        printf ("Final size %d: %d\n", i, sizes[i]);
+     /* The size of the last group is the remainder itself */
+    if (remainder > 0)
+        sizes[group_number - 1] = remainder;
+
+#ifdef DEBUG
+    for (i = 0; i < group_number; i++) {
+        printf("Size group:%d is %d\n", i, sizes[i]);
+    }
+#endif
+
+    for (i = 0; i < group_number; i++) {
+        for (j = 0; j < 5; j++) {
+#ifdef DEBUG
+            printf ("Element %d group:%d sizes:%d %d\n", array[c], i,
+                                                         sizes[i], length);
+#endif
+            groups[i][j] = array[c];
+            c++;
+            if (c >= length) {
+                break;
+            }
+        }
     }
 
-    i1 = 0;
-    i2 = sizes[0];
-    i3 = i2 + sizes[1];
-    i4 = i3 + sizes[2];
-    i5 = i4 + sizes[3];
+#ifdef DEBUG
+    for (i = 0; i < group_number; i++) {
+        print_array (groups[i], sizes[i]);
+    }
+#endif
 
-    print_array (&array[i1], sizes[0]);
-    print_array (&array[i2], sizes[1]);
-    print_array (&array[i3], sizes[2]);
-    print_array (&array[i4], sizes[3]);
-    print_array (&array[i5], sizes[4]);
+    for (i = 0; i < group_number; i++) {
+        medians[i] = 0; /* dummy init */
+        medians[i] = median (groups[i], sizes[i]);
+    }
 
-    medians[0] = median (&array[i1], sizes[0]);
-    medians[1] = median (&array[i2], sizes[1]);
-    medians[2] = median (&array[i3], sizes[2]);
-    medians[3] = median (&array[i4], sizes[3]);
-    medians[4] = median (&array[i5], sizes[4]);
+#ifdef DEBUG
+    for (i = 0; i < group_number; i++) {
+        printf ("Median group:%d is %d\n", i, medians[i]);
+    }
+#endif
 
-    mom = median (medians, 5);
+    mom = median (medians, group_number);
 
+#ifdef DEBUG
     printf ("MOM %d\n", mom);
-    
+#endif
+
+
     left_size = 0;
     right_size = 0;
 
@@ -92,20 +153,25 @@ int knth_n_mom (int array[], int length, int k) {
     for (i = 0; i < length; i ++) {
         if (array[i] < mom) {
             left[left_size++] = array[i];
-        } else {
+        } else if (array[i] > mom){
             right[right_size++] = array[i];
         }
     }
 
+#ifdef DEBUG
     print_array (left, left_size);
     print_array (right, right_size);
+    printf ("ls: %d rs:%d k:%d\n", left_size, right_size, k);
+#endif
 
-    exit(0);
+    if (k == left_size + 1)
+        return mom;
 
-    if (k < left_size)
+    if (k < left_size + 1) {
         return knth_n_mom (left, left_size, k);
-    else
-        return knth_n_mom (right, right_size, length - left_size);
+    } else {
+        return knth_n_mom (right, right_size, k - left_size - 1);
+    }
 }
 
 int main (int argc, char **argv)
@@ -125,6 +191,12 @@ int main (int argc, char **argv)
     assert (3 == median (median3, 5));
     assert (3 == median (median4, 5));
     assert (3 == median (median5, 5));
+
+    assert (1 == knth_n_mom (median1, 5, 1));
+    assert (2 == knth_n_mom (median2, 5, 2));
+    assert (3 == knth_n_mom (median3, 5, 3));
+    assert (4 == knth_n_mom (median4, 5, 4));
+    assert (5 == knth_n_mom (median5, 5, 5));
 
     assert (1 == knth_n_mom (array, 13, 4));
 
