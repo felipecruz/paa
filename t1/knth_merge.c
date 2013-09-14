@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <limits.h>
-#include <assert.h>
 #include "paa.h"
 
 int knth_merge (int array[], int length, int k) {
@@ -15,6 +10,7 @@ int knth_merge (int array[], int length, int k) {
     return copy_array[k - 1];
 }
 
+#ifdef MAIN
 int main (int argc, char **argv)
 {
     int array[] = {99, 3, 70, 8, -1, -300, 4, 120, 340, 1000, 2, 1, -500};
@@ -40,3 +36,4 @@ int main (int argc, char **argv)
 
     return 0;
 }
+#endif

@@ -1,17 +1,4 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
-#include <assert.h>
-
-void print_array (int array[], int length) {
-    int i;
-
-    for (i = 0; i < length; i++) {
-        printf ("%d ", array[i]);
-    }
-
-    printf ("\n");
-}
+#include "paa.h"
 
 int has_n (int *array, int length, int n)
 {
@@ -50,6 +37,7 @@ int knth_nk (int array[], int length, int k) {
     return min;
 }
 
+#ifdef MAIN
 int main (int argc, char **argv)
 {
     int i;
@@ -73,3 +61,4 @@ int main (int argc, char **argv)
 
     return 0;
 }
+#endif

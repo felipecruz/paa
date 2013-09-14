@@ -7,16 +7,6 @@
 
 #include "paa.h"
 
-int knth_merge (int array[], int length, int k) {
-    int copy_array[length];
-
-    memcpy (copy_array, array, length * sizeof (int));
-
-    _mergesort (copy_array, length);
-
-    return copy_array[k - 1];
-}
-
 int randon_range (int a, int b)
 {
     int r = a + rand() / (RAND_MAX / (b - 1 - a + 1) + 1);
@@ -25,14 +15,14 @@ int randon_range (int a, int b)
 
 int knth_n_quickselect (int array[], int length, int k) {
     int pivot;
+    int i;
     int c = 0;
-    int i, j;
     int left[length/2], right[length/2];
     int left_size, right_size;
 
     /* sort and merge for small arrays */
     if  (length <= 5)
-        return knth_merge (array, length, k);
+        return _knth_merge (array, length, k);
 
     c = randon_range (0, length);
     pivot = array[c];
@@ -69,6 +59,7 @@ int knth_n_quickselect (int array[], int length, int k) {
     }
 }
 
+#ifdef MAIN
 int main (int argc, char **argv)
 {
     int array[13] = {99, 3, 70, 8, -1, -300, 4, 120, 340, 1000, 2, 1, -500};
@@ -92,3 +83,4 @@ int main (int argc, char **argv)
 
     return 0;
 }
+#endif
