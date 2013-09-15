@@ -7,12 +7,6 @@
 
 #include "paa.h"
 
-int randon_range (int a, int b)
-{
-    int r = a + rand() / (RAND_MAX / (b - 1 - a + 1) + 1);
-    return r;
-}
-
 int knth_n_quickselect (int array[], int length, int k) {
     int pivot;
     int i;

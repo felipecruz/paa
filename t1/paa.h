@@ -12,5 +12,7 @@
 void print_array (int array[], int length);
 void _mergesort (int *array, int length);
 int _knth_merge (int array[], int length, int k);
+int randon_range (int a, int b);
+int has_n (int *array, int length, int n);
 
 #endif

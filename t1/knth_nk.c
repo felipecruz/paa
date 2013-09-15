@@ -1,17 +1,5 @@
 #include "paa.h"
 
-int has_n (int *array, int length, int n)
-{
-    int i;
-
-    for (i = 0; i < length; i++) {
-        if (n == array[i])
-            return 1;
-    }
-
-    return 0;
-}
-
 int knth_nk (int array[], int length, int k) {
     int i, j;
     int min;

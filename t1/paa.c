@@ -10,6 +10,24 @@ void print_array (int array[], int length) {
     printf ("\n");
 }
 
+int randon_range (int a, int b)
+{
+    int r = a + rand() / (RAND_MAX / (b - 1 - a + 1) + 1);
+    return r;
+}
+
+int has_n (int *array, int length, int n)
+{
+    int i;
+
+    for (i = 0; i < length; i++) {
+        if (n == array[i])
+            return 1;
+    }
+
+    return 0;
+}
+
 void _mergesort (int *array, int length) {
     int copy_array[length];
     int middle = length / 2;
