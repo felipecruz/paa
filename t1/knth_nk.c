@@ -1,27 +1,29 @@
 #include "paa.h"
 
-int knth_nk (int array[], int length, int k) {
+int knth_nk (int *array, int length, int k) {
     int i, j;
-    int min;
+    int number;
+    int min = INT_MAX;
     int *aux;
 
-    aux = (int*) malloc (sizeof (int) * sizeof (length));
-
-    if (length == 1)
-        return array[0];
+    aux = (int*) malloc (sizeof (int) * length);
+    for (i = 0; i < length; i++) {
+        aux[i] = 0;
+    }
 
     for (i = 0; i < k; i++) {
         min = INT_MAX;
         for (j = 0; j < length; j++) {
-            if (!has_n (aux, i, array[j])) {
-                if (array[j] < min) {
-                    min = array[j];
-                }
+            number = array[j];
+            assert (number <= length);
+            if (aux[number - 1] == 0 && number < min) {
+                min = number;
             }
         }
-        aux[i] = min;
+        aux[number - 1] = min;
     }
 
+    free (aux);
     return min;
 }
 
