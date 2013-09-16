@@ -18,7 +18,7 @@ int knth_n_quickselect (int array[], int length, int k) {
     if  (length <= 5)
         return _knth_merge (array, length, k);
 
-    c = randon_range (0, length);
+    c = randon_range (0, length - 1);
     pivot = array[c];
 
 #ifdef DEBUG
