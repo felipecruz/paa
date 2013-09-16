@@ -11,7 +11,7 @@ int knth_n_quickselect (int array[], int length, int k) {
     int pivot;
     int i;
     int c = 0;
-    int left[length/2], right[length/2];
+    int left[length], right[length];
     int left_size, right_size;
 
     /* sort and merge for small arrays */

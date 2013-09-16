@@ -32,7 +32,7 @@ int knth_n_mom (int array[], int length, int k) {
     int sizes[group_number];
     int groups[group_number][5];
     int medians[group_number + 1];
-    int left[length/2], right[length/2];
+    int left[length], right[length];
     int left_size, right_size;
 
     /* sort and merge for small arrays */
