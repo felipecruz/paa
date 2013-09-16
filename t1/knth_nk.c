@@ -2,25 +2,24 @@
 
 int knth_nk (int *array, int length, int k) {
     int i, j;
-    int number;
+    int number, curr_min_index;
     int min = INT_MAX;
     int *aux;
 
-    aux = (int*) malloc (sizeof (int) * length);
-    for (i = 0; i < length; i++) {
-        aux[i] = 0;
-    }
+    aux = init_zeros_array (length + 1);
+
+    curr_min_index = -1;
 
     for (i = 0; i < k; i++) {
         min = INT_MAX;
         for (j = 0; j < length; j++) {
             number = array[j];
-            assert (number <= length);
-            if (aux[number - 1] == 0 && number < min) {
+            if (check_marked (aux, j) && number < min) {
                 min = number;
+                curr_min_index = j;
             }
         }
-        aux[number - 1] = min;
+        mark_int (aux, curr_min_index, min);
     }
 
     free (aux);

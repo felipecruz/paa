@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdint.h>
 
 #ifndef _PAA_H_
 #define _PAA_H_
@@ -21,6 +22,8 @@ void print_array (int array[], int length);
 void _mergesort (int *array, int length);
 int _knth_merge (int array[], int length, int k);
 int randon_range (int a, int b);
-int has_n (int *array, int length, int n);
 
+int *init_zeros_array (int length);
+void mark_int (int *array, int num, int val);
+int check_marked (int *array, int num);
 #endif

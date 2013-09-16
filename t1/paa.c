@@ -16,16 +16,27 @@ int randon_range (int a, int b)
     return r;
 }
 
-int has_n (int *array, int length, int n)
-{
+int *init_zeros_array (int length) {
     int i;
+    int *array;
+
+    assert (length > 0);
+
+    array = malloc (sizeof (int) * length);
 
     for (i = 0; i < length; i++) {
-        if (n == array[i])
-            return 1;
+        array[i] = 0;
     }
 
-    return 0;
+    return array;
+}
+
+int check_marked (int *array, int num) {
+    return 0 == array[num];
+}
+
+void mark_int (int *array, int num, int val) {
+    array[num] = val;
 }
 
 void _mergesort (int *array, int length) {
