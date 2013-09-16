@@ -10,9 +10,9 @@ void print_array (int array[], int length) {
     printf ("\n");
 }
 
-int randon_range (int a, int b)
+int randon_range (int min, int max)
 {
-    int r = a + rand() / (RAND_MAX / (b - 1 - a + 1) + 1);
+    int r = min + (rand() % (int)(max - min + 1));
     return r;
 }
 
