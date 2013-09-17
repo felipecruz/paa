@@ -1,13 +1,18 @@
 #include "paa.h"
 
 int knth_merge (int array[], int length, int k) {
-    int copy_array[length];
+    int kn = 0;
+    int *copy_array = (int*) malloc (sizeof (int) * length);
 
+    /* não alteramos o array original por isso fazemos uma cópia */
     memcpy (copy_array, array, length * sizeof (int));
 
     _mergesort (copy_array, length);
 
-    return copy_array[k - 1];
+    kn = copy_array[k - 1];
+    free (copy_array);
+
+    return kn;
 }
 
 #ifdef MAIN

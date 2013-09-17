@@ -40,34 +40,42 @@ void mark_int (int *array, int num, int val) {
 }
 
 void _mergesort (int *array, int length) {
-    int copy_array[length];
-    int middle = length / 2;
     int c, i, j;
+    int *left, *right;
+    int middle = length / 2;
 
-    c = i = 0;
-    j = middle;
-
-    if (length == 1) {
+    if (length == 1 || length == 0) {
         return;
     }
 
-    _mergesort (array, middle);
-    _mergesort (&array[middle], length - middle);
+    i = 0;
+    c = 0;
+    j = middle;
+
+    left = malloc (sizeof (int) * middle);
+    right = malloc (sizeof (int) * (length - middle));
+
+    memcpy (left, array, middle);
+    memcpy (right, &array[middle], length - middle);
+
+    _mergesort (left, middle);
+    _mergesort (right, length - middle);
 
     while (c < length) {
         if (array[i] < array[j] && i < middle) {
-            copy_array[c] = array[i++];
-        } else if (array [i] > array[j] && j < length) {
-            copy_array[c] = array[j++];
+            array[c] = array[i++];
+        } else if (array[i] > array[j] && j < length) {
+            array[c] = array[j++];
         } else if (i >= middle) {
-            copy_array[c] = array[j++];
+            array[c] = array[j++];
         } else if (j >= length) {
-            copy_array[c] = array[i++];
+            array[c] = array[i++];
         }
         c++;
     }
 
-    memcpy (array, copy_array, length * sizeof (int));
+    free (left);
+    free (right);
 }
 
 /* if K < 5, use knth_merge */
