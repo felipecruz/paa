@@ -11,7 +11,7 @@ int knth_n_quickselect (int array[], int length, int k) {
     int pivot;
     int i;
     int c = 0;
-    int left[length], right[length];
+    int *left, *right;
     int left_size, right_size;
 
     /* sort and merge for small arrays */
@@ -27,6 +27,9 @@ int knth_n_quickselect (int array[], int length, int k) {
 
     left_size = 0;
     right_size = 0;
+
+    left = malloc (sizeof(int) * length);
+    right = malloc (sizeof(int) * length);
 
     /* partition */
     for (i = 0; i < length; i ++) {
@@ -47,8 +50,10 @@ int knth_n_quickselect (int array[], int length, int k) {
         return pivot;
 
     if (k < left_size + 1) {
+        free (right);
         return knth_n_quickselect (left, left_size, k);
     } else {
+        free (left);
         return knth_n_quickselect (right, right_size, k - left_size - 1);
     }
 }
