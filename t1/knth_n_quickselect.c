@@ -7,12 +7,6 @@
 
 #include "paa.h"
 
-void swap (int array[], int a, int b) {
-    int c = array[b];
-    array[b] = array[a];
-    array[a] = c;
-}
-
 int _knth_n_quickselect (int array[], int length, int k) {
     int i;
     int c = 0;

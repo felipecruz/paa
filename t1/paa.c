@@ -16,6 +16,12 @@ int randon_range (int min, int max)
     return r;
 }
 
+void swap (int array[], int a, int b) {
+    int c = array[b];
+    array[b] = array[a];
+    array[a] = c;
+}
+
 int *init_zeros_array (int length) {
     int i;
     int *array;

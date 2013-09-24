@@ -18,6 +18,7 @@ int knth_n_quickselect (int array[], int length, int k);
 
 int *gen_instance_type1 (int length);
 
+void swap (int array[], int a, int b);
 void print_array (int array[], int length);
 void _mergesort (int *array, int length);
 int _knth_merge (int array[], int length, int k);
