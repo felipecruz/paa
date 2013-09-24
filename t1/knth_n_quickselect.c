@@ -34,7 +34,7 @@ int _knth_n_quickselect (int array[], int length, int k) {
     if (k == left_size)
         return pivot;
 
-    if (k <= left_size) {
+    if (k < left_size) {
         return _knth_n_quickselect (array, left_size, k);
     } else {
         return _knth_n_quickselect (&array[left_size + 1],
