@@ -1,10 +1,12 @@
 #include "paa.h"
 
-
 int median (int array[], int length) {
     int i, j;
     int middle = length / 2;
     int result[length];
+
+    if (length == 0)
+        return array[0];
 
     for (i = 0; i < length; i ++) {
         result[i] = 0;
@@ -19,112 +21,63 @@ int median (int array[], int length) {
             return array[i];
     }
 
-    return -1;
+    return array[0];
 }
 
-
-
-int knth_n_mom (int array[], int length, int k) {
+int _knth_n_mom (int array[], int length, int k) {
     int c = 0;
-    int mom, i, j;
-    int remainder = length % 5;
+    int mom, i;
     int group_number = (length / 5);
-    int sizes[group_number];
-    int groups[group_number][5];
-    int medians[group_number + 1];
-    int left[length], right[length];
-    int left_size, right_size;
+    int left_size;
+    int *medians = malloc (sizeof (int) * (group_number));
 
-    /* sort and merge for small arrays */
-    if  (length <= 5)
-        return _knth_merge (array, length, k);
+    /* se o array é pequeno usamos knth_nk */
+    if (length <= 5)
+        return _knth_nk (array, length, k + 1);
 
-    /* If X % 5 > 0 then we need one more group
-     * 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11
-     * |      1     |       2       |  3        |
-     */
-    if (remainder > 0)
-        group_number++;
+    for (i = 0; i < group_number; i++)
+        medians[i] = median (&array[i*5], 5);
 
-    /* initialize auxiliary arrays sizes */
-    for (i = 0; i < group_number; i++) {
-        sizes[i] = 5;
-    }
+    mom = _knth_n_mom (medians, group_number, group_number / 2);
+    free (medians);
 
-     /* The size of the last group is the remainder itself */
-    if (remainder > 0)
-        sizes[group_number - 1] = remainder;
-
-#ifdef DEBUG
-    for (i = 0; i < group_number; i++) {
-        printf("Size group:%d is %d\n", i, sizes[i]);
-    }
-#endif
-
-    for (i = 0; i < group_number; i++) {
-        for (j = 0; j < 5; j++) {
-#ifdef DEBUG
-            printf ("Element %d group:%d sizes:%d %d\n", array[c], i,
-                                                         sizes[i], length);
-#endif
-            groups[i][j] = array[c];
-            c++;
-            if (c >= length) {
-                break;
-            }
+    /* precisamos achar o indice do pivot */
+    for (i = 0; i < length; i++){
+        if (array[i] == mom) {
+            c = i;
+            break;
         }
     }
 
-#ifdef DEBUG
-    for (i = 0; i < group_number; i++) {
-        print_array (groups[i], sizes[i]);
-    }
-#endif
-
-    for (i = 0; i < group_number; i++) {
-        medians[i] = 0; /* dummy init */
-        medians[i] = median (groups[i], sizes[i]);
-    }
-
-#ifdef DEBUG
-    for (i = 0; i < group_number; i++) {
-        printf ("Median group:%d is %d\n", i, medians[i]);
-    }
-#endif
-
-    mom = median (medians, group_number);
-
-#ifdef DEBUG
-    printf ("MOM %d\n", mom);
-#endif
-
+    /* coloca o pivot no final para nao passarmos por ele no loop
+     * de particionamento */
+    swap (array, c, length - 1);
 
     left_size = 0;
-    right_size = 0;
 
-    /* partition */
-    for (i = 0; i < length; i ++) {
+    for (i = 0; i < length - 1; i++) {
         if (array[i] < mom) {
-            left[left_size++] = array[i];
-        } else if (array[i] > mom){
-            right[right_size++] = array[i];
+            swap (array, i, left_size++);
         }
     }
 
-#ifdef DEBUG
-    print_array (left, left_size);
-    print_array (right, right_size);
-    printf ("ls: %d rs:%d k:%d\n", left_size, right_size, k);
-#endif
+    /* coloca pivot de volta logo depois do lado esquerdo */
+    swap (array, left_size, length -1);
 
-    if (k == left_size + 1)
+    if (k == left_size)
         return mom;
 
-    if (k < left_size + 1) {
-        return knth_n_mom (left, left_size, k);
+    if (k < left_size) {
+        return _knth_n_mom (array, left_size, k);
     } else {
-        return knth_n_mom (right, right_size, k - left_size - 1);
+        return _knth_n_mom (&array[left_size + 1],
+                            length - left_size - 1,
+                            k - left_size - 1);
     }
+}
+
+int knth_n_mom (int array[], int length, int k) {
+    return _knth_n_mom (array, length, k - 1);
 }
 
 #ifdef MAIN

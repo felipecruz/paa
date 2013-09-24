@@ -84,19 +84,29 @@ void _mergesort (int *array, int length) {
     free (right);
 }
 
-/* if K < 5, use knth_merge */
-int _knth_merge (int array[], int length, int k) {
-    int kn = 0;
-    int *copy_array = (int*) malloc (sizeof (int) * length);
+/* if K < 5, use knth_nk */
+int _knth_nk (int *array, int length, int k) {
+    int i, j;
+    int number, curr_min_index;
+    int min = INT_MAX;
+    int *aux;
 
-    /* não alteramos o array original por isso fazemos uma cópia */
-    memcpy (copy_array, array, length * sizeof (int));
+    aux = init_zeros_array (length + 1);
 
-    _mergesort (copy_array, length);
+    curr_min_index = -1;
 
-    kn = copy_array[k - 1];
-    free (copy_array);
+    for (i = 0; i < k; i++) {
+        min = INT_MAX;
+        for (j = 0; j < length; j++) {
+            number = array[j];
+            if (check_marked (aux, j) && number < min) {
+                min = number;
+                curr_min_index = j;
+            }
+        }
+        mark_int (aux, curr_min_index, min);
+    }
 
-    return kn;
-}
-/* end of copy paste knth_merge */
+    free (aux);
+    return min;
+}/* end of copy paste knth_merge */

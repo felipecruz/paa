@@ -21,7 +21,7 @@ int *gen_instance_type1 (int length);
 void swap (int array[], int a, int b);
 void print_array (int array[], int length);
 void _mergesort (int *array, int length);
-int _knth_merge (int array[], int length, int k);
+int _knth_nk (int array[], int length, int k);
 int randon_range (int a, int b);
 
 int *init_zeros_array (int length);
