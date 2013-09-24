@@ -7,55 +7,50 @@
 
 #include "paa.h"
 
-int knth_n_quickselect (int array[], int length, int k) {
-    int pivot;
+void swap (int array[], int a, int b) {
+    int c = array[b];
+    array[b] = array[a];
+    array[a] = c;
+}
+
+int _knth_n_quickselect (int array[], int length, int k) {
     int i;
     int c = 0;
-    int *left, *right;
-    int left_size, right_size;
-
-    /* sort and merge for small arrays */
-    if  (length <= 5)
-        return _knth_merge (array, length, k);
+    int pivot;
+    int left_size;
 
     c = randon_range (0, length - 1);
     pivot = array[c];
 
-#ifdef DEBUG
-    printf ("Pivot %d\n", pivot);
-#endif
+    /* coloca o pivot no final para nao passarmos por ele no loop
+     * de particionamento */
+    swap (array, c, length - 1);
 
     left_size = 0;
-    right_size = 0;
 
-    left = malloc (sizeof(int) * length);
-    right = malloc (sizeof(int) * length);
-
-    /* partition */
-    for (i = 0; i < length; i ++) {
+    for (i = 0; i < length - 1; i++) {
         if (array[i] < pivot) {
-            left[left_size++] = array[i];
-        } else if (array[i] > pivot){
-            right[right_size++] = array[i];
+            swap (array, i, left_size++);
         }
     }
 
-#ifdef DEBUG
-    print_array (left, left_size);
-    print_array (right, right_size);
-    printf ("ls: %d rs:%d k:%d\n", left_size, right_size, k);
-#endif
+    /* coloca pivot de volta logo depois do lado esquerdo */
+    swap (array, left_size, length -1);
 
-    if (k == left_size + 1)
+    if (k == left_size)
         return pivot;
 
-    if (k < left_size + 1) {
-        free (right);
-        return knth_n_quickselect (left, left_size, k);
+    if (k <= left_size) {
+        return _knth_n_quickselect (array, left_size, k);
     } else {
-        free (left);
-        return knth_n_quickselect (right, right_size, k - left_size - 1);
+        return _knth_n_quickselect (&array[left_size + 1],
+                                    length - left_size - 1,
+                                    k - left_size - 1);
     }
+}
+
+int knth_n_quickselect (int array[], int length, int k) {
+    return _knth_n_quickselect (array, length, k - 1);
 }
 
 #ifdef MAIN
