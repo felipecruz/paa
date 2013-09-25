@@ -75,16 +75,19 @@ void _mergesort (int *array, int length) {
     c = 0;
     j = 0;
 
-    printf ("Merging\n");
-    print_array (left, middle);
-    print_array (right, length - middle);
+    //printf ("Merging\n");
+    //print_array (left, middle);
+    //print_array (right, length - middle);
     while (c < length) {
+        //printf ("c:%d i:%d j:%d\n", c, i, j);
         if (i >= middle) {
             array[c] = right[j++];
+            c++;
             continue;
         }
         if (j >= length - middle) {
             array[c] = left[i++];
+            c++;
             continue;
         }
 
@@ -96,9 +99,9 @@ void _mergesort (int *array, int length) {
         c++;
     }
 
-    printf ("After merge\n");
-    print_array (array, length);
-    printf ("\n");
+    //printf ("After merge\n");
+    //print_array (array, length);
+    //printf ("\n");
 
     free (left);
     free (right);
