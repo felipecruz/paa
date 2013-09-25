@@ -19,6 +19,6 @@ def gen_list(size):
     f.close()
 
 if __name__ == "__main__":
-    for i in range(25, 26, 1):
+    for i in range(1, 26, 1):
         print("Position swaps %d" % (2 ** i))
         gen_list(i)
