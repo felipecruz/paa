@@ -61,24 +61,44 @@ void _mergesort (int *array, int length) {
     left = malloc (sizeof (int) * middle);
     right = malloc (sizeof (int) * (length - middle));
 
-    memcpy (left, array, middle);
-    memcpy (right, &array[middle], length - middle);
+    for (i = 0; i < middle; i++)
+        left[i] = array[c++];
+
+    for (i = 0; i < (length - middle); i++)
+        right[i] = array[c++];
+
 
     _mergesort (left, middle);
     _mergesort (right, length - middle);
 
+    i = 0;
+    c = 0;
+    j = 0;
+
+    printf ("Merging\n");
+    print_array (left, middle);
+    print_array (right, length - middle);
     while (c < length) {
-        if (array[i] < array[j] && i < middle) {
-            array[c] = array[i++];
-        } else if (array[i] > array[j] && j < length) {
-            array[c] = array[j++];
-        } else if (i >= middle) {
-            array[c] = array[j++];
-        } else if (j >= length) {
-            array[c] = array[i++];
+        if (i >= middle) {
+            array[c] = right[j++];
+            continue;
+        }
+        if (j >= length - middle) {
+            array[c] = left[i++];
+            continue;
+        }
+
+        if (left[i] < right[j]) {
+            array[c] = left[i++];
+        } else if (right[j] <= left[i]) {
+            array[c] = right[j++];
         }
         c++;
     }
+
+    printf ("After merge\n");
+    print_array (array, length);
+    printf ("\n");
 
     free (left);
     free (right);
