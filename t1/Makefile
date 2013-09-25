@@ -1,6 +1,6 @@
 FLAGS=-lrt -O3
 
-all:
+all: clean
 	@gcc paa.c knth_nk.c -Wall -o knth_nk -DMAIN
 	@gcc paa.c knth_merge.c -Wall -o knth_merge -DMAIN
 	@gcc paa.c knth_n_mom.c -Wall -o knth_n_mom -DMAIN
@@ -15,12 +15,12 @@ test:
 	./knth_n_quickselect
 
 clean:
-	rm -f knth_nk
-	rm -f knth_merge
-	rm -f knth_n_mom
-	rm -f knth_n_quickselect
-	rm -f gen_instances
-	rm -f benchmark
+	@rm -f knth_nk
+	@rm -f knth_merge
+	@rm -f knth_n_mom
+	@rm -f knth_n_quickselect
+	@rm -f gen_instances
+	@rm -f benchmark
 
 debug:
 	@gcc gen_instances.c paa.c knth_nk.c knth_merge.c knth_n_mom.c knth_n_quickselect.c benchmark.c -g -Wall -lm -o benchmark
