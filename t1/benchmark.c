@@ -76,11 +76,11 @@ int main (int argc, char **argv)
         knth_nk, knth_merge, knth_n_mom, knth_n_quickselect
     };
 
-    for (f = 1; f < 2; f++) {
+    for (f = 1; f < 4; f++) {
 
         /* Instâncias A */
 
-        for (i = 1; i < 2; i++) {
+        for (i = 1; i < 16; i++) {
             printf("Testing: %s\n", functions[f]);
             instance_size = 1000 * pow (2, i);
             sprintf(fname, "py%d.txt", instance_size);
@@ -91,28 +91,28 @@ int main (int argc, char **argv)
             START(s);
             k = 5;
             number = (*funcs[f]) (instance, instance_size, k);
-            //assert (number == k);
+            assert (number == k);
             FINISH (e, s);
 
             memcpy (instance, original, sizeof (int) * instance_size);
             START(s);
             k = log (instance_size);
             number = (*funcs[f]) (instance, instance_size, k);
-            //assert (number == k);
+            assert (number == k);
             FINISH (e, s);
 
             memcpy (instance, original, sizeof (int) * instance_size);
             START(s);
             k = sqrt (instance_size);
             number = (*funcs[f]) (instance, instance_size, k);
-            //assert (number == k);
+            assert (number == k);
             FINISH (e, s);
 
             memcpy (instance, original, sizeof (int) * instance_size);
             START(s);
             k = instance_size / 2;
             number = (*funcs[f]) (instance, instance_size, k);
-            //assert (number == k);
+            assert (number == k);
             FINISH (e, s);
 
             free (instance);
@@ -121,7 +121,7 @@ int main (int argc, char **argv)
         /**/
         /* Istâncias Tipo B */
 
-        for (i = 25; i < 26; i++) {
+        for (i = 1; i < 26; i++) {
             printf("Testing: %s\n", functions[f]);
             instance_size = pow (2, 25);
             instance_swaps = pow (2, i);
