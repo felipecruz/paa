@@ -1,6 +1,14 @@
 #include <time.h>
 #include <sys/time.h>
 
+#define START(s) current_utc_time (&s)
+#define FINISH(e, s)                                                        \
+    current_utc_time (&e);                                                  \
+    elapsed = timespecDiff (&e, &s);                                        \
+    printf ("SIZE:%d %dnth is %d -- Took %ld msec\n",                       \
+            instance_size, k, number, elapsed);                             \
+
+
 #ifdef __MACH__
 #include <mach/clock.h>
 #include <mach/mach.h>
@@ -20,6 +28,12 @@ void current_utc_time(struct timespec *ts) {
 #else
   clock_gettime(CLOCK_REALTIME, ts);
 #endif
+}
+
+int64_t timespecDiff(struct timespec *timeA_p, struct timespec *timeB_p)
+{
+  return ((timeA_p->tv_sec * 1000000000) + timeA_p->tv_nsec) -
+           ((timeB_p->tv_sec * 1000000000) + timeB_p->tv_nsec);
 }
 
 int *get_data (const char *file, int size)
@@ -47,13 +61,13 @@ int *get_data (const char *file, int size)
 
 int main (int argc, char **argv)
 {
-    int i, f, instance_size;
-    int *instance;
+    int i, f, instance_size, instance_swaps;
+    int *instance, *original;
     int k;
     int number;
     char fname[20];
-    struct timespec s, e;
     long elapsed;
+    struct timespec s, e;
 
     char *functions[]= {"kntk_nk", "knth_merge", "knth_n_mom",
                         "knth_n_quickselect"};
@@ -62,64 +76,94 @@ int main (int argc, char **argv)
         knth_nk, knth_merge, knth_n_mom, knth_n_quickselect
     };
 
-    for (f = 0; f < 4; f++) {
-        for (i = 1; i < 16; i++) {
+    for (f = 1; f < 2; f++) {
+
+        /* Instâncias A */
+
+        for (i = 1; i < 2; i++) {
             printf("Testing: %s\n", functions[f]);
             instance_size = 1000 * pow (2, i);
             sprintf(fname, "py%d.txt", instance_size);
-            instance = get_data (fname, instance_size);
+            original = get_data (fname, instance_size);
+            instance = malloc (sizeof (int) * instance_size);
 
-            current_utc_time (&s);
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
             k = 5;
             number = (*funcs[f]) (instance, instance_size, k);
-            current_utc_time (&e);
-            elapsed = e.tv_nsec - s.tv_nsec;
-            elapsed = elapsed / 1000000000;
-            printf ("SIZE:%d %dnth is %d -- Took %lu seconds\n", instance_size,
-                                                                k,
-                                                                number,
-                                                                elapsed);
-            free (instance);
+            //assert (number == k);
+            FINISH (e, s);
 
-            instance = get_data (fname, instance_size);
-            current_utc_time (&s);
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
             k = log (instance_size);
             number = (*funcs[f]) (instance, instance_size, k);
-            current_utc_time (&e);
-            elapsed = e.tv_nsec - s.tv_nsec;
-            elapsed = elapsed / 1000000000;
-            printf ("SIZE:%d %dnth is %d -- Took %lu seconds\n", instance_size,
-                                                                k,
-                                                                number,
-                                                                elapsed);
-            free (instance);
+            //assert (number == k);
+            FINISH (e, s);
 
-            instance = get_data (fname, instance_size);
-            current_utc_time (&s);
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
             k = sqrt (instance_size);
             number = (*funcs[f]) (instance, instance_size, k);
-            current_utc_time (&e);
-            elapsed = e.tv_nsec - s.tv_nsec;
-            elapsed = elapsed / 1000000000;
-            printf ("SIZE:%d %dnth is %d -- Took %lu seconds\n", instance_size,
-                                                                k,
-                                                                number,
-                                                                elapsed);
-            free (instance);
+            //assert (number == k);
+            FINISH (e, s);
 
-            instance = get_data (fname, instance_size);
-            current_utc_time (&s);
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
             k = instance_size / 2;
             number = (*funcs[f]) (instance, instance_size, k);
-            current_utc_time (&e);
-            elapsed = e.tv_nsec - s.tv_nsec;
-            elapsed = elapsed / 1000000000;
-            printf ("SIZE:%d %dnth is %d -- Took %lu seconds\n", instance_size,
-                                                                k,
-                                                                number,
-                                                                elapsed);
+            //assert (number == k);
+            FINISH (e, s);
+
             free (instance);
         }
+
+        /**/
+        /* Istâncias Tipo B */
+
+        for (i = 25; i < 26; i++) {
+            printf("Testing: %s\n", functions[f]);
+            instance_size = pow (2, 25);
+            instance_swaps = pow (2, i);
+            sprintf(fname, "B_%d.txt", instance_swaps);
+            original = get_data (fname, instance_swaps);
+            instance = malloc (sizeof (int) * instance_size);
+
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
+            k = 5;
+            number = (*funcs[f]) (instance, instance_size, k);
+            assert (number == k);
+            FINISH (e, s);
+            bzero (instance, sizeof (int) * instance_size);
+
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
+            k = log (instance_swaps);
+            number = (*funcs[f]) (instance, instance_size, k);
+            assert (number == k);
+            FINISH (e, s);
+            bzero (instance, sizeof (int) * instance_size);
+
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
+            current_utc_time (&s);
+            k = sqrt (instance_swaps);
+            number = (*funcs[f]) (instance, instance_size, k);
+            assert (number == k);
+            FINISH (e, s);
+            bzero (instance, sizeof (int) * instance_size);
+
+            memcpy (instance, original, sizeof (int) * instance_size);
+            START(s);
+            k = instance_swaps / 2;
+            number = (*funcs[f]) (instance, instance_size, k);
+            assert (number == k);
+            FINISH (e, s);
+
+            free (instance);
+        }
+
     }
 
     return 0;
