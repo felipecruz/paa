@@ -1,4 +1,5 @@
 import random
+import sys
 
 def gen_list(size):
     f = open('py%d.txt' % size, 'w')
@@ -18,7 +19,10 @@ def gen_list(size):
     f.close()
 
 if __name__ == "__main__":
-    for i in range(1, 16, 1):
+    if len(sys.argv) < 2:
+        print("Especificar o valir de i")
+    else:
+        i = int(sys.argv[1])
         size = 1000 * (2 ** i)
         print("Instance %d size: %d" % (i, size))
         gen_list(size)
