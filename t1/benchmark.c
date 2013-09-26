@@ -5,9 +5,6 @@
 #define FINISH(e, s)                                                        \
     current_utc_time (&e);                                                  \
     elapsed = timespecDiff (&e, &s);                                        \
-    printf ("SIZE:%d %dnth is %d -- Took %ld msec\n",                       \
-            instance_size, k, number, elapsed);                             \
-
 
 #ifdef __MACH__
 #include <mach/clock.h>
@@ -61,110 +58,77 @@ int *get_data (const char *file, int size)
 
 int main (int argc, char **argv)
 {
-    int i, f, instance_size, instance_swaps;
+    int instance_size, instance_swaps;
     int *instance, *original;
     int k;
     int number;
-    char fname[20];
-    long elapsed;
-    struct timespec s, e;
+    int algo;
+    int type;
+    int instance_number;
 
+    char instance_type;
+    char fname[20];
     char *functions[]= {"kntk_nk", "knth_merge", "knth_n_mom",
                         "knth_n_quickselect"};
+    long elapsed;
+    struct timespec s, e;
 
     int (*funcs[4]) (int *array, int length, int k) = {
         knth_nk, knth_merge, knth_n_mom, knth_n_quickselect
     };
 
-    for (f = 1; f < 4; f++) {
-
-        /* Instâncias A */
-
-        for (i = 1; i < 16; i++) {
-            printf("Testing: %s\n", functions[f]);
-            instance_size = 1000 * pow (2, i);
-            sprintf(fname, "py%d.txt", instance_size);
-            original = get_data (fname, instance_size);
-            instance = malloc (sizeof (int) * instance_size);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = 5;
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = log (instance_size);
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = sqrt (instance_size);
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = instance_size / 2;
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-
-            free (instance);
-        }
-
-        /**/
-        /* Istâncias Tipo B */
-
-        for (i = 1; i < 26; i++) {
-            printf("Testing: %s\n", functions[f]);
-            instance_size = pow (2, 25);
-            instance_swaps = pow (2, i);
-            sprintf(fname, "B_%d.txt", instance_swaps);
-            original = get_data (fname, instance_swaps);
-            instance = malloc (sizeof (int) * instance_size);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = 5;
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-            bzero (instance, sizeof (int) * instance_size);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = log (instance_swaps);
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-            bzero (instance, sizeof (int) * instance_size);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            current_utc_time (&s);
-            k = sqrt (instance_swaps);
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-            bzero (instance, sizeof (int) * instance_size);
-
-            memcpy (instance, original, sizeof (int) * instance_size);
-            START(s);
-            k = instance_swaps / 2;
-            number = (*funcs[f]) (instance, instance_size, k);
-            assert (number == k);
-            FINISH (e, s);
-
-            free (instance);
-        }
-
+    if (argc < 4) {
+        printf("./benchmark algo_index{nk,merge,mom,quick}"
+               "k{1=5,2=log,3=sqrt,4=n/2} type{1=A,2=B} instance_number\n");
+        return 0;
     }
+
+    algo = atoi (argv[1]);
+    algo--;
+
+    k = atoi (argv[2]);
+    type = atoi (argv[3]);
+    instance_number = atoi (argv[4]);
+
+    if (type == 1) {
+        instance_size = 1000 * pow (2, instance_number);
+        sprintf(fname, "py%d.txt", instance_size);
+        original = get_data (fname, instance_size);
+        instance = malloc (sizeof (int) * instance_size);
+        instance_type = 'A';
+    } else {
+        instance_size = pow (2, 25);
+        instance_swaps = pow (2, instance_number);
+        sprintf(fname, "B_%d.txt", instance_swaps);
+        original = get_data (fname, instance_size);
+        instance = malloc (sizeof (int) * instance_size);
+        instance_type = 'B';
+    }
+
+    if (k == 1)
+        k = 5;
+    if (k == 2)
+        k = log (instance_size);
+    if (k == 3)
+        k = sqrt (instance_size);
+    if (k == 4)
+        k = instance_size / 2;
+
+    memcpy (instance, original, sizeof (int) * instance_size);
+    START(s);
+    number = (*funcs[algo]) (instance, instance_size, k);
+    assert (number == k);
+    FINISH (e, s);
+
+    printf("%s;", functions[algo]);
+    printf("%d;", instance_size);
+    printf("%d;", k);
+    printf("%c;", instance_type);
+    printf("%d;", instance_number);
+    printf("%ld\n", elapsed);
+
+    free (instance);
+    free (original);
 
     return 0;
 }
