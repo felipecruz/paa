@@ -29,7 +29,6 @@ int knth_nk (int *array, int length, int k) {
 #ifdef MAIN
 int main (int argc, char **argv)
 {
-    int i;
     int numbers[11] = {8, 7, 1, 2, 4, 5, 3, 9, 11, -200, 12};
 
     assert (-200 == knth_nk (numbers, 11, 1));
