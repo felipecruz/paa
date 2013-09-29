@@ -84,6 +84,8 @@ int main (int argc, char **argv)
     }
 
     algo = atoi (argv[1]);
+    /* Ex: 1 = knth_nk, porém seu índice internamente é 0, logo temos que
+     * decrementar */
     algo--;
 
     k = atoi (argv[2]);
