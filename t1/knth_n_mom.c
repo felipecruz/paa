@@ -92,7 +92,6 @@ int main (int argc, char **argv)
     int median4[5] = {1, 2, 4, 3, 5};
     int median5[5] = {1, 2, 5, 4, 3};
 
-    printf ("median %d\n", median (median1, 5));
     assert (3 == median (median1, 5));
     assert (3 == median (median2, 5));
     assert (3 == median (median3, 5));

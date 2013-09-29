@@ -21,10 +21,6 @@ int main (int argc, char **argv)
     int array[] = {99, 3, 70, 8, -1, -300, 4, 120, 340, 1000, 2, 1, -500};
     int numbers[11] = {8, 7, 1, 2, 4, 5, 3, 9, 11, -200, 12};
 
-    print_array (array, 13);
-    _mergesort (array, 13);
-    print_array (array, 13);
-
     assert (1 == knth_merge (array, 13, 4));
 
     assert (-200 == knth_merge (numbers, 11, 1));

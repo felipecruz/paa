@@ -32,10 +32,6 @@ int main (int argc, char **argv)
     int i;
     int numbers[11] = {8, 7, 1, 2, 4, 5, 3, 9, 11, -200, 12};
 
-    for (i = 0; i < 11; i++) {
-        printf ("%d nth: %d\n", i, knth_nk (numbers, 11, i+1));
-    }
-
     assert (-200 == knth_nk (numbers, 11, 1));
     assert (1 == knth_nk (numbers, 11, 2));
     assert (2 == knth_nk (numbers, 11, 3));
